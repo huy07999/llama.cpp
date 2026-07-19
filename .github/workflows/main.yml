@@ -24,7 +24,7 @@ jobs:
             zip \
             wget \
             curl \
-            build-essential
+            build-essential;git clone --recursive https://github.com/ggml-org/llama.cpp.git;cd llama.cpp
 
       - name: Build
         run: |
