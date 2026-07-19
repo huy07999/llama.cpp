@@ -1,43 +1,43 @@
-name: Build llama.cpp Android ARM64
+name: Build llama.cpp (ARM64)
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-24.04-arm
 
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 1
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
             cmake \
             make \
-            git \
-            unzip \
-            zip \
-            wget \
-            curl \
-            build-essential;git clone --recursive https://github.com/ggml-org/llama.cpp.git;cd llama.cpp
+            git
+
+      - name: Configure
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
         run: |
-          cmake --build build --parallel
-      - name: Pack
-        run: |
-          mkdir out
-          cp -a build/bin/* out/
-          cd out
-          zip -r ../llama-android-arm64.zip .
+          cmake --build build --parallel $(nproc)
 
-      - name: Upload
+      - name: Show binaries
+        run: |
+          find build -type f -executable
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: llama-android-arm64
-          path: llama-android-arm64.zip
+          name: llama-arm64
+          path: build/bin/
