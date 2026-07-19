@@ -29,12 +29,6 @@ jobs:
       - name: Build
         run: |
           cmake --build build --parallel
-
-      - name: Strip
-        run: |
-          STRIP=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip
-          find build/bin -type f -executable -exec "$STRIP" {} \; || true
-
       - name: Pack
         run: |
           mkdir out
@@ -45,5 +39,5 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: *llama*
+          name: llama-android-arm64
           path: llama-android-arm64.zip
